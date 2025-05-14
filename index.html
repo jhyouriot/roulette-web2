@@ -2,25 +2,31 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>영혼의 꽃: 경계너머 룰렛</title>
+  <title></title>
   <style>
     body {
       text-align: center;
       font-family: 'Noto Sans KR', sans-serif;
-      background: linear-gradient(to bottom, #e8e0f0, #f9f9f9);
+      background: url('img src='https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EC%98%81%ED%98%BC%EC%9D%98%20%EA%BD%83%20%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B1%20%EB%B0%B0%EA%B2%BD7.png') no-repeat center center fixed;
+      background-size: cover;
       overflow: hidden;
+      margin: 0;
     }
-    h1 {
-      margin-top: 20px;
+    header {
+      height: 120px;
+      background-color: rgba(255, 255, 255, 0.0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    h1 img {
+    header img {
       height: 100px;
     }
     #wheel-container {
       position: relative;
       width: 300px;
       height: 300px;
-      margin: 0 auto;
+      margin: 20px auto;
     }
     #wheel {
       width: 100%;
@@ -78,9 +84,10 @@
       border-bottom: 20px solid #d067a4;
       z-index: 10;
     }
-    #spin {
+    #spin, #staff {
       padding: 12px 24px;
       font-size: 18px;
+      margin: 10px;
       background: #59418e;
       color: white;
       border: none;
@@ -112,10 +119,22 @@
         opacity: 0;
       }
     }
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
-  <h1><img src="/mnt/data/v2대지 1.png" alt="영혼의 꽃: 경계너머"></h1>
+  <header><img src="img src='https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png" alt="로고"></header>
   <div id="wheel-container">
     <div id="fixed-pointer"></div>
     <div id="wheel">
@@ -123,28 +142,31 @@
     </div>
   </div>
   <button id="spin">돌리기</button>
+  <button id="staff">STAFF</button>
   <div id="result"></div>
+  <div id="popup"></div>
 
   <script>
     const wheel = document.getElementById('wheel');
     const result = document.getElementById('result');
     const spinBtn = document.getElementById('spin');
+    const staffBtn = document.getElementById('staff');
+    const popup = document.getElementById('popup');
     const container = document.getElementById('wheel');
 
     const segments = [
-      { name: '10주년 기념 LP 음반', weight: 30 },
-      { name: '2023 Worlds 티모 피규어', weight: 30 },
-      { name: '2023 Worlds 볼캡(흰색)', weight: 30 },
-      { name: 'Gangplank Vs Miss Fortune', weight: 50 },
-      { name: '포로 미니 인형', weight: 100 },
-      { name: '비치볼 포로', weight: 98 },
-      { name: 'Wristband: Take the Lantern', weight: 200 }
+      { name: '10주년 기념 LP 음반', weight: 30, count: 0 },
+      { name: '2023 Worlds 티모 피규어', weight: 30, count: 0 },
+      { name: '2023 Worlds 볼캡(흰색)', weight: 30, count: 0 },
+      { name: 'Gangplank Vs Miss Fortune', weight: 50, count: 0 },
+      { name: '포로 미니 인형', weight: 100, count: 0 },
+      { name: '비치볼 포로', weight: 98, count: 0 },
+      { name: 'Wristband: Take the Lantern', weight: 200, count: 0 }
     ];
 
     const totalWeight = segments.reduce((sum, seg) => sum + seg.weight, 0);
     const anglePerSegment = 360 / segments.length;
 
-    // Add text labels dynamically
     segments.forEach((seg, i) => {
       const el = document.createElement('div');
       el.className = 'segment-text';
@@ -175,6 +197,7 @@
 
     spinBtn.onclick = () => {
       const randomIndex = weightedRandom();
+      segments[randomIndex].count++;
       const newRotation = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
       currentRotation += newRotation;
 
@@ -188,6 +211,16 @@
       setTimeout(() => {
         result.textContent = `결과: ${segments[randomIndex].name}`;
       }, 4000);
+    };
+
+    staffBtn.onclick = () => {
+      let content = '<h3>당첨 집계</h3><ul>';
+      segments.forEach(s => {
+        content += `<li>${s.name}: ${s.count}개</li>`;
+      });
+      content += '</ul><button onclick="document.getElementById(\'popup\').style.display=\'none\'">닫기</button>';
+      popup.innerHTML = content;
+      popup.style.display = 'block';
     };
   </script>
 </body>
