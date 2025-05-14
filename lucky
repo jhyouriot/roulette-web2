@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>영혼의 꽃: 경계너머 룰렛</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(to bottom, #e8e0f0, #f9f9f9);
+    }
+    h1 {
+      color: #d067a4;
+      font-size: 36px;
+      margin-top: 20px;
+    }
+    #wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #59418e;
+      margin: 20px auto;
+      position: relative;
+      background: conic-gradient(
+        #d067a4 0% 4.29%,
+        #59418e 4.29% 8.58%,
+        #d067a4 8.58% 12.87%,
+        #59418e 12.87% 25.73%,
+        #d067a4 25.73% 44.58%,
+        #59418e 44.58% 70.15%,
+        #d067a4 70.15% 100%
+      );
+      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(89, 65, 142, 0.3);
+    }
+    #center-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: url('center-logo.png') no-repeat center/contain;
+      position: absolute;
+      z-index: 2;
+    }
+    #spin {
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #59418e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    #pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 20px solid #d067a4;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+      color: #59418e;
+    }
+  </style>
+</head>
+<body>
+  <h1><img src="lucky-logo.png" alt="영혼의 꽃: 경계너머" style="height: 60px;"></h1>
+  <div id="wheel">
+    <div id="pointer"></div>
+    <div id="center-logo"></div>
+  </div>
+  <button id="spin">돌리기</button>
+  <div id="result"></div>
+
+  <script>
+    const wheel = document.getElementById('wheel');
+    const result = document.getElementById('result');
+    const spinBtn = document.getElementById('spin');
+
+    const segments = [
+      { name: '10주년 기념 LP 음반', weight: 30 },
+      { name: '2023 Worlds 티모 피규어', weight: 30 },
+      { name: '2023 Worlds 볼캡(흰색)', weight: 30 },
+      { name: 'Gangplank Vs Miss Fortune', weight: 50 },
+      { name: '포로 미니 인형', weight: 100 },
+      { name: '비치볼 포로', weight: 98 },
+      { name: 'Wristband: Take the Lantern', weight: 200 }
+    ];
+
+    const totalWeight = segments.reduce((sum, seg) => sum + seg.weight, 0);
+
+    function weightedRandom() {
+      const rand = Math.random() * totalWeight;
+      let sum = 0;
+      for (let i = 0; i < segments.length; i++) {
+        sum += segments[i].weight;
+        if (rand < sum) return i;
+      }
+    }
+
+    const anglePerSegment = 360 / segments.length;
+
+    spinBtn.onclick = () => {
+      const randomIndex = weightedRandom();
+      const rotateTo = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
+
+      wheel.style.transform = `rotate(${rotateTo}deg)`;
+
+      setTimeout(() => {
+        result.textContent = `결과: ${segments[randomIndex].name}`;
+      }, 4000);
+    };
+  </script>
+</body>
+</html>
