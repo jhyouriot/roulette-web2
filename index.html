@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>랜덤 룰렛</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background: #f9f9f9;
+    }
+    #wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #444;
+      margin: 40px auto;
+      position: relative;
+      background: conic-gradient(
+        #f44336 0% 25%,
+        #4caf50 25% 50%,
+        #2196f3 50% 75%,
+        #ffeb3b 75% 100%
+      );
+      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    #spin {
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 20px solid red;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div id="wheel">
+    <div id="pointer"></div>
+  </div>
+  <button id="spin">돌리기</button>
+  <div id="result"></div>
+
+  <script>
+    const wheel = document.getElementById('wheel');
+    const result = document.getElementById('result');
+    const spinBtn = document.getElementById('spin');
+
+    const segments = ['빨강', '초록', '파랑', '노랑'];
+    const anglePerSegment = 360 / segments.length;
+
+    spinBtn.onclick = () => {
+      const randomIndex = Math.floor(Math.random() * segments.length);
+      const rotateTo = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
+
+      wheel.style.transform = `rotate(${rotateTo}deg)`;
+
+      setTimeout(() => {
+        result.textContent = `결과: ${segments[randomIndex]}`;
+      }, 4000);
+    };
+  </script>
+</body>
+</html>
+
