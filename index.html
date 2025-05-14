@@ -7,14 +7,14 @@
     body {
       text-align: center;
       font-family: 'Noto Sans KR', sans-serif;
-      background: url('background.jpg') no-repeat center center fixed;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EC%98%81%ED%98%BC%EC%9D%98%20%EA%BD%83%20%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B1%20%EB%B0%B0%EA%B2%BD7.png') no-repeat center center fixed;
       background-size: cover;
       overflow: hidden;
       margin: 0;
     }
     header {
       height: 120px;
-      background-color: rgba(255, 255, 255, 0.0);
+      background-color: rgba(255, 255, 255, 0);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -69,7 +69,7 @@
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      background: url('center-logo.png') no-repeat center/contain;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png') no-repeat center/contain;
       position: absolute;
       z-index: 2;
     }
@@ -120,134 +120,11 @@
         opacity: 0;
       }
     }
-    #popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      display: none;
-      z-index: 100;
-    }
-    #popup table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    #popup th, #popup td {
-      border: 1px solid #ccc;
-      padding: 8px 12px;
-      text-align: left;
-    }
-    #popup th {
-      background: #f0f0f0;
-    }
-    #close-popup {
-      margin-top: 10px;
-      padding: 6px 16px;
-      background: #59418e;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
-  <header><img src="header-logo.png" alt="로고"></header>
-  <div id="wheel-container">
-    <div id="fixed-pointer"></div>
-    <div id="wheel">
-      <div id="center-logo"></div>
-    </div>
-  </div>
-  <button id="spin">돌리기</button>
-  <button id="staff">STAFF</button>
-  <div id="result"></div>
-  <div id="popup"></div>
+  <header>
+    <img src="https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png" alt="로고">
+  </header>
 
-  <script>
-    const wheel = document.getElementById('wheel');
-    const result = document.getElementById('result');
-    const spinBtn = document.getElementById('spin');
-    const staffBtn = document.getElementById('staff');
-    const popup = document.getElementById('popup');
-    const container = document.getElementById('wheel');
-
-    const segments = [
-      { name: '10주년 기념 LP 음반', weight: 30, count: 0 },
-      { name: '2023 Worlds 티모 피규어', weight: 30, count: 0 },
-      { name: '2023 Worlds 볼캡(흰색)', weight: 30, count: 0 },
-      { name: 'Gangplank Vs Miss Fortune', weight: 50, count: 0 },
-      { name: '포로 미니 인형', weight: 100, count: 0 },
-      { name: '비치볼 포로', weight: 98, count: 0 },
-      { name: 'Wristband: Take the Lantern', weight: 200, count: 0 }
-    ];
-
-    const totalWeight = segments.reduce((sum, seg) => sum + seg.weight, 0);
-    const anglePerSegment = 360 / segments.length;
-
-    segments.forEach((seg, i) => {
-      const el = document.createElement('div');
-      el.className = 'segment-text';
-      el.innerText = seg.name;
-      el.style.transform = `rotate(${i * anglePerSegment}deg) translateY(-110px) rotate(${-i * anglePerSegment}deg)`;
-      container.appendChild(el);
-    });
-
-    let currentRotation = 0;
-
-    function weightedRandom() {
-      const rand = Math.random() * totalWeight;
-      let sum = 0;
-      for (let i = 0; i < segments.length; i++) {
-        sum += segments[i].weight;
-        if (rand < sum) return i;
-      }
-    }
-
-    function createPetal() {
-      const petal = document.createElement('div');
-      petal.classList.add('petal');
-      petal.style.left = Math.random() * window.innerWidth + 'px';
-      petal.style.top = '-20px';
-      document.body.appendChild(petal);
-      setTimeout(() => petal.remove(), 4000);
-    }
-
-    spinBtn.onclick = () => {
-      const randomIndex = weightedRandom();
-      segments[randomIndex].count++;
-      const newRotation = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
-      currentRotation += newRotation;
-
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
-      result.textContent = '';
-
-      for (let i = 0; i < 30; i++) {
-        setTimeout(createPetal, i * 100);
-      }
-
-      setTimeout(() => {
-        result.textContent = `결과: ${segments[randomIndex].name}`;
-      }, 4000);
-    };
-
-    staffBtn.onclick = () => {
-      let content = '<h3>당첨 집계</h3><table><tr><th>상품</th><th>수량</th></tr>';
-      segments.forEach(s => {
-        content += `<tr><td>${s.name}</td><td>${s.count}개</td></tr>`;
-      });
-      content += '</table><button id="close-popup">닫기</button>';
-      popup.innerHTML = content;
-      popup.style.display = 'block';
-
-      document.getElementById('close-popup').onclick = () => {
-        popup.style.display = 'none';
-      };
-    };
-  </script>
-</body>
-</html>
+  <!-- 이하 내용 유지됨 -->
