@@ -14,19 +14,15 @@
       text-align: center;
       overflow-x: hidden;
     }
-
     header {
       height: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
     header img {
       max-height: 100px;
-      width: auto;
     }
-
     #wheel-container {
       position: relative;
       width: 90vw;
@@ -35,7 +31,6 @@
       max-height: 320px;
       margin: 0 auto;
     }
-
     #wheel {
       width: 100%;
       height: 100%;
@@ -55,35 +50,31 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 30px rgba(89, 65, 142, 0.3);
     }
-
     .segment-text {
       position: absolute;
-      width: 100%;
+      width: 50%;
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       transform-origin: center;
       font-size: 2.3vw;
-      color: #fff;
+      color: white;
       font-weight: bold;
-      pointer-events: none;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
       white-space: pre-wrap;
       text-align: center;
+      pointer-events: none;
     }
-
     #center-logo {
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png') no-repeat center/contain;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/logo_spirit_blosso.png') no-repeat center/contain;
       position: absolute;
       z-index: 2;
     }
-
     #fixed-pointer {
       position: absolute;
       top: -20px;
@@ -96,7 +87,6 @@
       border-bottom: 20px solid #d067a4;
       z-index: 10;
     }
-
     #spin, #staff {
       padding: 12px 24px;
       font-size: 16px;
@@ -106,15 +96,13 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-
     #result {
       margin-top: 20px;
-      font-size: 18px;
-      color: #59418e;
+      font-size: 20px;
+      color: white;
+      font-weight: bold;
     }
-
     .petal {
       position: fixed;
       width: 20px;
@@ -124,7 +112,6 @@
       pointer-events: none;
       animation: fall 4s linear forwards;
     }
-
     @keyframes fall {
       0% {
         transform: translateY(0) rotate(0deg);
@@ -135,7 +122,6 @@
         opacity: 0;
       }
     }
-
     #auth-popup {
       position: fixed;
       top: 50%;
@@ -150,7 +136,6 @@
       width: 80vw;
       max-width: 300px;
     }
-
     #auth-popup input {
       width: 100%;
       padding: 10px;
@@ -159,7 +144,6 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-
     #auth-popup button {
       width: 100%;
       padding: 10px;
@@ -170,7 +154,6 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     #popup {
       position: fixed;
       top: 50%;
@@ -185,7 +168,6 @@
       width: 90vw;
       max-width: 320px;
     }
-
     #popup .close-btn {
       position: absolute;
       top: 10px;
@@ -199,20 +181,17 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     #popup table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
     }
-
     #popup th, #popup td {
       border: 1px solid #ccc;
       padding: 8px 12px;
       text-align: left;
       font-size: 14px;
     }
-
     #popup th {
       background: #f0f0f0;
     }
@@ -244,7 +223,6 @@
 
   <script>
     const startDate = '2025-05-14';
-
     const segments = [
       { name: '10주년 기념\nLP 음반', weight: 30, count: 0 },
       { name: '2023 Worlds\n티모 피규어', weight: 30, count: 0 },
@@ -302,7 +280,6 @@
     function loadStoredCounts() {
       const savedDate = localStorage.getItem('drawStartDate');
       const savedCounts = localStorage.getItem('drawCounts');
-
       if (!savedDate || savedDate !== startDate) {
         localStorage.setItem('drawStartDate', startDate);
         saveCounts();
@@ -316,14 +293,13 @@
       const randomIndex = weightedRandom();
       segments[randomIndex].count++;
       saveCounts();
-
       const newRotation = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
       currentRotation += newRotation;
       wheel.style.transform = `rotate(${currentRotation}deg)`;
       result.textContent = '';
       for (let i = 0; i < 30; i++) setTimeout(createPetal, i * 100);
       setTimeout(() => {
-        result.textContent = `결과: ${segments[randomIndex].name.replace(/\n/g, ' ')}`;
+        result.textContent = segments[randomIndex].name.replace(/\n/g, ' ');
       }, 4000);
     };
 
