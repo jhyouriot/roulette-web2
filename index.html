@@ -8,11 +8,13 @@
       text-align: center;
       font-family: 'Noto Sans KR', sans-serif;
       background: linear-gradient(to bottom, #e8e0f0, #f9f9f9);
+      overflow: hidden;
     }
     h1 {
-      color: #d067a4;
-      font-size: 36px;
       margin-top: 20px;
+    }
+    h1 img {
+      height: 100px;
     }
     #wheel {
       width: 300px;
@@ -22,13 +24,13 @@
       margin: 20px auto;
       position: relative;
       background: conic-gradient(
-        #d067a4 0% 4.29%,
-        #59418e 4.29% 8.58%,
-        #d067a4 8.58% 12.87%,
-        #59418e 12.87% 25.73%,
-        #d067a4 25.73% 44.58%,
-        #59418e 44.58% 70.15%,
-        #d067a4 70.15% 100%
+        #f5f1e8 0% 14.2857%,
+        #d067a4 14.2857% 28.5714%,
+        #efb6ef 28.5714% 42.8571%,
+        #59418e 42.8571% 57.1428%,
+        #a2b7d1 57.1428% 71.4285%,
+        #781e4d 71.4285% 85.7142%,
+        #ac92c3 85.7142% 100%
       );
       transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
       display: flex;
@@ -70,10 +72,29 @@
       font-size: 24px;
       color: #59418e;
     }
+    .petal {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, #f9c3e3 30%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fall 4s linear forwards;
+    }
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1><img src="lucky-logo.png" alt="영혼의 꽃: 경계너머" style="height: 60px;"></h1>
+  <h1><img src="/mnt/data/v2대지 1.png" alt="영혼의 꽃: 경계너머"></h1>
   <div id="wheel">
     <div id="pointer"></div>
     <div id="center-logo"></div>
@@ -108,12 +129,28 @@
     }
 
     const anglePerSegment = 360 / segments.length;
+    let currentRotation = 0;
+
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.style.left = Math.random() * window.innerWidth + 'px';
+      petal.style.top = '-20px';
+      document.body.appendChild(petal);
+      setTimeout(() => petal.remove(), 4000);
+    }
 
     spinBtn.onclick = () => {
       const randomIndex = weightedRandom();
-      const rotateTo = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
+      const newRotation = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
+      currentRotation += newRotation;
 
-      wheel.style.transform = `rotate(${rotateTo}deg)`;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+      result.textContent = '';
+
+      for (let i = 0; i < 30; i++) {
+        setTimeout(createPetal, i * 100);
+      }
 
       setTimeout(() => {
         result.textContent = `결과: ${segments[randomIndex].name}`;
