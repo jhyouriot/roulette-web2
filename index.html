@@ -1,12 +1,63 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>영혼의 꽃: 경계너머 룰렛</title>
   <style>
-    /* 기존 스타일 유지 */
-    /* ... (생략) ... */
+    /* 기본 스타일 */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EC%98%81%ED%98%BC%EC%9D%98%20%EA%BD%83%20%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B1%20%EB%B0%B0%EA%B2%BD7.png') no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    header {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    header img {
+      max-height: 100px;
+      width: auto;
+    }
+
+    #wheel-container {
+      position: relative;
+      width: 90vw;
+      max-width: 320px;
+      height: 90vw;
+      max-height: 320px;
+      margin: 0 auto;
+    }
+
+    #wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 10px solid #59418e;
+      position: relative;
+      background: conic-gradient(
+        #f5f1e8 0% 14.2857%,
+        #d067a4 14.2857% 28.5714%,
+        #efb6ef 28.5714% 42.8571%,
+        #59418e 42.8571% 57.1428%,
+        #a2b7d1 57.1428% 71.4285%,
+        #781e4d 71.4285% 85.7142%,
+        #ac92c3 85.7142% 100%
+      );
+      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(89, 65, 142, 0.3);
+    }
 
     .segment-text {
       position: absolute;
@@ -25,6 +76,67 @@
       text-align: center;
     }
 
+    #center-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png') no-repeat center/contain;
+      position: absolute;
+      z-index: 2;
+    }
+
+    #fixed-pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 20px solid #d067a4;
+      z-index: 10;
+    }
+
+    #spin, #staff {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin: 12px 8px;
+      background: #59418e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #59418e;
+    }
+
+    .petal {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, #f9c3e3 30%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fall 4s linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
     #auth-popup {
       position: fixed;
       top: 50%;
@@ -39,6 +151,7 @@
       width: 80vw;
       max-width: 300px;
     }
+
     #auth-popup input {
       width: 100%;
       padding: 10px;
@@ -47,6 +160,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     #auth-popup button {
       width: 100%;
       padding: 10px;
@@ -57,6 +171,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     #popup {
       position: fixed;
       top: 50%;
@@ -71,6 +186,7 @@
       width: 90vw;
       max-width: 320px;
     }
+
     #popup .close-btn {
       position: absolute;
       top: 10px;
@@ -84,17 +200,20 @@
       font-weight: bold;
       cursor: pointer;
     }
+
     #popup table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
     }
+
     #popup th, #popup td {
       border: 1px solid #ccc;
       padding: 8px 12px;
       text-align: left;
       font-size: 14px;
     }
+
     #popup th {
       background: #f0f0f0;
     }
@@ -102,22 +221,26 @@
 </head>
 <body>
   <header>
-    <img src="https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png" alt="로고">
+    <img src="https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png" alt="로고" />
   </header>
+
   <div id="wheel-container">
     <div id="fixed-pointer"></div>
     <div id="wheel">
       <div id="center-logo"></div>
     </div>
   </div>
+
   <button id="spin">돌리기</button>
   <button id="staff">STAFF</button>
   <div id="result"></div>
+
   <div id="auth-popup">
     <p>STAFF 전용 비밀번호를 입력하세요</p>
-    <input type="password" id="passwordInput" placeholder="비밀번호 입력">
+    <input type="password" id="passwordInput" placeholder="비밀번호 입력" />
     <button onclick="checkPassword()">확인</button>
   </div>
+
   <div id="popup"></div>
 
   <script>
