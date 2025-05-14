@@ -244,6 +244,49 @@
   <div id="popup"></div>
 
   <script>
+    const startDate = '2025-05-14';
+
+// 저장된 누적 데이터 불러오기
+function loadStoredCounts() {
+  const savedDate = localStorage.getItem('drawStartDate');
+  const savedCounts = localStorage.getItem('drawCounts');
+
+  if (!savedDate || savedDate !== startDate) {
+    // 날짜가 다르면 리셋
+    localStorage.setItem('drawStartDate', startDate);
+    saveCounts(); // 초기값 0 저장
+  } else if (savedCounts) {
+    const parsed = JSON.parse(savedCounts);
+    segments.forEach((seg, idx) => seg.count = parsed[idx] || 0);
+  }
+}
+
+// 저장
+function saveCounts() {
+  const counts = segments.map(s => s.count);
+  localStorage.setItem('drawCounts', JSON.stringify(counts));
+}
+
+// 결과 누적 → 저장
+spinBtn.onclick = () => {
+  const randomIndex = weightedRandom();
+  segments[randomIndex].count++;
+  saveCounts(); // 누적 저장
+
+  const newRotation = 360 * 5 + (360 - randomIndex * anglePerSegment - anglePerSegment / 2);
+  currentRotation += newRotation;
+  wheel.style.transform = `rotate(${currentRotation}deg)`;
+  result.textContent = '';
+  for (let i = 0; i < 30; i++) setTimeout(createPetal, i * 100);
+  setTimeout(() => {
+    result.textContent = `결과: ${segments[randomIndex].name.replace(/\n/g, ' ')}`;
+  }, 4000);
+};
+
+// 페이지 로딩 시 카운트 불러오기
+window.onload = loadStoredCounts;
+
+    
     const segments = [
       { name: '10주년 기념\nLP 음반', weight: 30, count: 0 },
       { name: '2023 Worlds\n티모 피규어', weight: 30, count: 0 },
