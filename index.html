@@ -18,10 +18,11 @@
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EC%98%81%ED%98%BC%EC%9D%98%20%EA%BD%83%20%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B1%20%EB%B0%B0%EA%B2%BD7.jpg') no-repeat center center fixed;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EC%98%81%ED%98%BC%EC%9D%98%20%EA%BD%83%20%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B1%20%EB%B0%B0%EA%B2%BD7.png') no-repeat center center fixed;
       background-size: cover;
       z-index: -1;
     }
+
     header {
       height: 120px;
       display: flex;
@@ -30,9 +31,11 @@
       position: relative;
       z-index: 1;
     }
+
     header img {
       max-height: 100px;
     }
+
     #wheel-container {
       position: relative;
       width: 90vw;
@@ -42,6 +45,7 @@
       margin: 0 auto;
       z-index: 1;
     }
+
     #wheel {
       width: 100%;
       height: 100%;
@@ -60,6 +64,7 @@
       will-change: transform;
       position: relative;
     }
+
     #center-logo {
       width: 70px;
       height: 70px;
@@ -71,6 +76,7 @@
       transform: translate(-50%, -50%);
       z-index: 2;
     }
+
     #fixed-pointer {
       position: absolute;
       top: -20px;
@@ -83,8 +89,17 @@
       border-bottom: 20px solid #d067a4;
       z-index: 10;
     }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
     #spin {
-      margin-top: 40px;
       padding: 12px 24px;
       font-size: 16px;
       background: #59418e;
@@ -92,9 +107,15 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      position: relative;
-      z-index: 1;
     }
+
+    #result {
+      margin-top: 10px;
+      font-size: 20px;
+      color: white;
+      font-weight: bold;
+    }
+
     #staff {
       position: fixed;
       top: 10px;
@@ -109,14 +130,7 @@
       z-index: 9999;
       transform: translateZ(0);
     }
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-      color: white;
-      font-weight: bold;
-      position: relative;
-      z-index: 1;
-    }
+
     .petal {
       position: fixed;
       width: 20px;
@@ -126,10 +140,12 @@
       pointer-events: none;
       animation: fall 4s linear forwards;
     }
+
     @keyframes fall {
       0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
+
     #auth-popup, #popup {
       position: fixed;
       top: 50%;
@@ -141,9 +157,10 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
       display: none;
       z-index: 200;
-      width: 80vw;
-      max-width: 320px;
+      width: 90vw;
+      max-width: 360px;
     }
+
     #auth-popup input {
       width: 100%;
       padding: 10px;
@@ -152,6 +169,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     #auth-popup button {
       width: 100%;
       padding: 10px;
@@ -162,6 +180,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     #popup .close-btn {
       position: absolute;
       top: 10px;
@@ -175,19 +194,36 @@
       font-weight: bold;
       cursor: pointer;
     }
+
     #popup table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
     }
+
     #popup th, #popup td {
       border: 1px solid #ccc;
       padding: 8px 12px;
-      text-align: left;
+      text-align: center;
       font-size: 14px;
     }
+
     #popup th {
       background: #f0f0f0;
+    }
+
+    #banner {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 1920px;
+      height: auto;
+      text-align: center;
+    }
+
+    #banner img {
+      width: 100%;
+      max-width: 1920px;
+      height: auto;
     }
   </style>
 </head>
@@ -203,9 +239,12 @@
     </div>
   </div>
 
-  <button id="spin">돌리기</button>
+  <div id="controls">
+    <button id="spin">START</button>
+    <div id="result"></div>
+  </div>
+
   <button id="staff">STAFF</button>
-  <div id="result"></div>
 
   <div id="auth-popup">
     <p>STAFF 전용 비밀번호를 입력하세요</p>
@@ -214,6 +253,11 @@
   </div>
 
   <div id="popup"></div>
+
+  <div id="banner">
+    <!-- 배너 이미지 넣으세요 -->
+    <img src="https://via.placeholder.com/1920x1080?text=Banner+Image" alt="하단 배너" />
+  </div>
 
   <script>
     const startDate = '2025-05-14';
@@ -310,13 +354,19 @@
 
     function showPopup() {
       let content = '<button class="close-btn" onclick="closePopup()">×</button>';
-      content += '<table><tr><th>상품</th><th>남은 수량</th></tr>';
-      segments.forEach(s => {
-        content += `<tr><td>${s.name}</td><td>${s.count}개</td></tr>`;
+      content += '<table><tr><th>상품</th><th>당첨수량</th><th>남은수량</th></tr>';
+      segments.forEach((s, i) => {
+        const used = getInitialCount(i) - s.count;
+        content += `<tr><td>${s.name}</td><td>${used}</td><td>${s.count}</td></tr>`;
       });
       content += '</table><br/><button onclick="downloadExcel()">엑셀 다운로드</button>';
       popup.innerHTML = content;
       popup.style.display = 'block';
+    }
+
+    function getInitialCount(index) {
+      const initial = [30,30,30,50,100,98,200];
+      return initial[index];
     }
 
     function closePopup() {
@@ -324,9 +374,10 @@
     }
 
     function downloadExcel() {
-      let csv = '상품명,남은 수량\n';
-      segments.forEach(s => {
-        csv += `"${s.name}",${s.count}\n`;
+      let csv = '상품명,당첨수량,남은수량\n';
+      segments.forEach((s, i) => {
+        const used = getInitialCount(i) - s.count;
+        csv += `"${s.name}",${used},${s.count}\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
