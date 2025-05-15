@@ -4,32 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>영혼의 꽃: 경계너머 룰렛</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
+    * { box-sizing: border-box; }
+
     html, body {
       margin: 0;
       padding: 0;
       font-family: 'Noto Sans KR', sans-serif;
-      transform-style: flat;
-      backface-visibility: hidden;
       overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
       background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EC%98%81%ED%98%BC%EC%9D%98%20%EA%BD%83%20%EC%8B%9C%EB%84%A4%EB%A7%88%ED%8B%B1%20%EB%B0%B0%EA%B2%BD7.jpg') no-repeat center center fixed;
       background-size: cover;
-      z-index: -1;
     }
 
     header {
-      height: 120px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      position: relative;
-      z-index: 1;
+      padding: 20px;
     }
 
     header img {
@@ -39,14 +32,13 @@
     #wheel-container {
       position: relative;
       width: 90vw;
-      max-width: 320px;
+      max-width: 360px;
       height: 90vw;
-      max-height: 320px;
+      max-height: 360px;
       margin: 0 auto;
-      z-index: 1;
     }
 
-    #wheel {
+   #wheel {
       width: 100%;
       height: 100%;
       border-radius: 50%;
@@ -66,14 +58,14 @@
     }
 
     #center-logo {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/logo_spirit_blosso.png') no-repeat center/contain;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: url('https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/logo_spirit_blosso.png') no-repeat center/contain;
       z-index: 2;
     }
 
@@ -91,12 +83,10 @@
     }
 
     #controls {
-      margin-top: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      z-index: 2;
+      margin-top: 30px;
     }
 
     #spin {
@@ -111,7 +101,7 @@
 
     #result {
       margin-top: 10px;
-      font-size: 20px;
+      font-size: 18px;
       color: white;
       font-weight: bold;
     }
@@ -128,7 +118,6 @@
       border-radius: 6px;
       cursor: pointer;
       z-index: 9999;
-      transform: translateZ(0);
     }
 
     .petal {
@@ -172,9 +161,9 @@
 
     #auth-popup button {
       width: 100%;
-      padding: 15px;
+      padding: 10px;
       font-size: 16px;
-      background: #1b1c31;
+      background: #59418e;
       color: #fff;
       border: none;
       border-radius: 5px;
@@ -185,7 +174,7 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background: #1b1c31;
+      background: #59418e;
       color: white;
       border: none;
       border-radius: 50%;
@@ -213,10 +202,7 @@
     }
 
     #banner {
-      margin-top: 45px;
-      width: 100%;
-      max-width: 1920px;
-      height: auto;
+      margin: 40px auto;
       text-align: center;
     }
 
@@ -228,7 +214,8 @@
   </style>
 </head>
 <body>
-  <header>
+
+    <header>
     <img src="https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/v2%EB%8C%80%EC%A7%80%201.png" alt="로고" />
   </header>
 
@@ -246,50 +233,92 @@
 
   <button id="staff">STAFF</button>
 
+  <!-- STAFF 인증 팝업 -->
   <div id="auth-popup">
     <p>STAFF 전용 비밀번호를 입력하세요</p>
     <input type="password" id="passwordInput" placeholder="비밀번호 입력" />
     <button onclick="checkPassword()">확인</button>
   </div>
 
+  <!-- STAFF 결과 팝업 -->
   <div id="popup"></div>
 
+  <!-- 하단 배너 -->
   <div id="banner">
-    <!-- 배너 이미지 넣으세요 -->
-    <img src="https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EB%A1%A4%ED%8C%8C%ED%81%AC%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%83%81%ED%92%88%EB%B0%B0%EB%84%88.png" alt="하단 배너" />
+    <img src="https://gi.esmplus.com/rgmerch01/%EC%82%AC%EC%9A%A9X/%EB%A1%A4%ED%8C%8C%ED%81%AC%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%83%81%ED%92%88%EB%B0%B0%EB%84%88.png" alt="배너 이미지">
   </div>
 
+  <!-- Firebase 연동 및 룰렛 기능 -->
   <script>
-    const startDate = '2025-05-14';
-    const segments = [
-      { name: '10주년 기념 LP 음반', count: 30 },
-      { name: '2023 Worlds 티모 피규어', count: 30 },
-      { name: '2023 Worlds 볼캡(흰색)', count: 30 },
-      { name: 'Gangplank Vs Miss Fortune', count: 50 },
-      { name: '포로 미니 인형', count: 100 },
-      { name: '비치볼 포로', count: 98 },
-      { name: 'Wristband: Take the Lantern', count: 200 }
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlTNldUhqkRLdr52NBTwl-SgZKVd0yuaI",
+      authDomain: "sprit-5e81c.firebaseapp.com",
+      databaseURL: "https://sprit-5e81c-default-rtdb.firebaseio.com",
+      projectId: "sprit-5e81c",
+      storageBucket: "sprit-5e81c.firebasestorage.app",
+      messagingSenderId: "892410325566",
+      appId: "1:892410325566:web:fb7f027144a9926fd67f6f",
+      measurementId: "G-4HWY8BDNKM"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const prizes = [
+      "10주년 기념 LP 음반",
+      "2023 Worlds 티모 피규어",
+      "2023 Worlds 볼캡(흰색)",
+      "Gangplank Vs Miss Fortune",
+      "포로 미니 인형",
+      "비치볼 포로",
+      "Wristband: Take the Lantern"
     ];
+    const initialCounts = [30, 30, 30, 50, 100, 98, 200];
+    const anglePerSegment = 360 / prizes.length;
 
-    const wheel = document.getElementById('wheel');
-    const result = document.getElementById('result');
-    const spinBtn = document.getElementById('spin');
-    const staffBtn = document.getElementById('staff');
-    const popup = document.getElementById('popup');
-    const authPopup = document.getElementById('auth-popup');
-
-    const anglePerSegment = 360 / segments.length;
+    const wheel = document.getElementById("wheel");
+    const result = document.getElementById("result");
     let currentRotation = 0;
 
-    function getAvailableSegments() {
-      return segments.filter(s => s.count > 0);
+    async function fetchPrizeData() {
+      const snapshot = await db.ref("prizes").once("value");
+      const data = snapshot.val() || {};
+      return prizes.map((name, i) => {
+        const won = data[name]?.won || 0;
+        return {
+          name,
+          won,
+          remaining: initialCounts[i] - won
+        };
+      });
     }
 
-    function randomFromAvailable() {
-      const available = getAvailableSegments();
-      if (available.length === 0) return -1;
-      const selected = available[Math.floor(Math.random() * available.length)];
-      return segments.indexOf(selected);
+    async function updatePrizeCount(index) {
+      const name = prizes[index];
+      const ref = db.ref("prizes/" + name + "/won");
+      await ref.transaction(won => (won || 0) + 1);
+    }
+
+    async function spinWheel() {
+      const data = await fetchPrizeData();
+      const available = data.filter(p => p.remaining > 0);
+      if (available.length === 0) {
+        result.textContent = "모든 상품이 소진되었습니다.";
+        return;
+      }
+
+      const randPrize = available[Math.floor(Math.random() * available.length)];
+      const index = prizes.indexOf(randPrize.name);
+      await updatePrizeCount(index);
+
+      const rotation = 360 * 5 + (360 - index * anglePerSegment - anglePerSegment / 2);
+      currentRotation += rotation;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+      result.textContent = "";
+      for (let i = 0; i < 30; i++) setTimeout(() => createPetal(), i * 100);
+      setTimeout(() => {
+        result.textContent = randPrize.name;
+      }, 4000);
     }
 
     function createPetal() {
@@ -300,95 +329,50 @@
       document.body.appendChild(petal);
       setTimeout(() => petal.remove(), 4000);
     }
-
-    function saveCounts() {
-      const counts = segments.map(s => s.count);
-      localStorage.setItem('drawCounts', JSON.stringify(counts));
-    }
-
-    function loadStoredCounts() {
-      const savedDate = localStorage.getItem('drawStartDate');
-      const savedCounts = localStorage.getItem('drawCounts');
-      if (!savedDate || savedDate !== startDate) {
-        localStorage.setItem('drawStartDate', startDate);
-        saveCounts();
-      } else if (savedCounts) {
-        const parsed = JSON.parse(savedCounts);
-        segments.forEach((seg, idx) => seg.count = parsed[idx] || 0);
-      }
-    }
-
-    spinBtn.onclick = () => {
-      const index = randomFromAvailable();
-      if (index === -1) {
-        result.textContent = '모든 상품이 소진되었습니다.';
-        return;
-      }
-
-      segments[index].count--;
-      saveCounts();
-
-      const rotation = 360 * 5 + (360 - index * anglePerSegment - anglePerSegment / 2);
-      currentRotation += rotation;
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
-      result.textContent = '';
-      for (let i = 0; i < 30; i++) setTimeout(createPetal, i * 100);
-      setTimeout(() => {
-        result.textContent = segments[index].name;
-      }, 4000);
-    };
-
-    staffBtn.onclick = () => {
-      authPopup.style.display = 'block';
-    };
-
-    function checkPassword() {
-      const input = document.getElementById('passwordInput').value;
-      if (input === 'CPX2025') {
-        authPopup.style.display = 'none';
+        function checkPassword() {
+      const pw = document.getElementById("passwordInput").value;
+      if (pw === "CPX2025") {
+        document.getElementById("auth-popup").style.display = "none";
         showPopup();
       } else {
-        alert('비밀번호가 틀렸습니다.');
+        alert("비밀번호가 틀렸습니다.");
       }
     }
 
-    function showPopup() {
+    async function showPopup() {
+      const data = await fetchPrizeData();
       let content = '<button class="close-btn" onclick="closePopup()">×</button>';
       content += '<table><tr><th>상품</th><th>당첨수량</th><th>남은수량</th></tr>';
-      segments.forEach((s, i) => {
-        const used = getInitialCount(i) - s.count;
-        content += `<tr><td>${s.name}</td><td>${used}</td><td>${s.count}</td></tr>`;
+      data.forEach(p => {
+        content += `<tr><td>${p.name}</td><td>${p.won}</td><td>${p.remaining}</td></tr>`;
       });
       content += '</table><br/><button onclick="downloadExcel()">엑셀 다운로드</button>';
-      popup.innerHTML = content;
-      popup.style.display = 'block';
-    }
-
-    function getInitialCount(index) {
-      const initial = [30,30,30,50,100,98,200];
-      return initial[index];
+      document.getElementById("popup").innerHTML = content;
+      document.getElementById("popup").style.display = "block";
     }
 
     function closePopup() {
-      popup.style.display = 'none';
+      document.getElementById("popup").style.display = "none";
     }
 
-    function downloadExcel() {
-      let csv = '상품명,당첨수량,남은수량\n';
-      segments.forEach((s, i) => {
-        const used = getInitialCount(i) - s.count;
-        csv += `"${s.name}",${used},${s.count}\n`;
+    async function downloadExcel() {
+      const data = await fetchPrizeData();
+      let csv = "상품명,당첨수량,남은수량\n";
+      data.forEach(p => {
+        csv += `"${p.name}",${p.won},${p.remaining}\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
+      link.href = URL.createObjectURL(blob);
       link.download = '룰렛_당첨_집계.csv';
       link.click();
-      URL.revokeObjectURL(url);
     }
 
-    window.onload = loadStoredCounts;
+    document.getElementById("spin").onclick = spinWheel;
+    document.getElementById("staff").onclick = () => {
+      document.getElementById("auth-popup").style.display = "block";
+    };
   </script>
 </body>
 </html>
+
