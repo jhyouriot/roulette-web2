@@ -251,19 +251,6 @@
     const popup = document.getElementById('popup');
     const authPopup = document.getElementById('auth-popup');
 
-    // 룰렛 숫자 NO.1 ~ NO.7 표시
-   segments.forEach((seg, i) => {
-  const label = document.createElement('div');
-  label.className = 'segment-label';
-  label.innerText = `NO.${i + 1}`;
-  const angle = i * anglePerSegment;
-  label.style.transform = `
-    rotate(${angle}deg) 
-    translateY(-42%) 
-    rotate(${-angle}deg)
-  `;
-  wheel.appendChild(label);
-});
 
     let currentRotation = 0;
 
